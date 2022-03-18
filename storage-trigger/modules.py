@@ -99,7 +99,7 @@ def get_correct_answers(class_id: str):
 def get_average_grade(Student_ID: str):
 
     query = """
-        SELECT AVG(grade)
+        SELECT AVG(grade) as avg_grade
         FROM(
             SELECT Grade_Total as grade
             FROM `pliroforiaka-systimata-2022.exams.results` as b
@@ -111,7 +111,13 @@ def get_average_grade(Student_ID: str):
             bigquery.ScalarQueryParameter("Student_ID", "STRING", Student_ID)
         ]
     )
-    return configuration.big_query_client.query(query, job_config=job_config).to_dataframe()
+    query_res = configuration.big_query_client.query(query, job_config=job_config)
+
+    results = {}
+    results["Student_ID"] = Student_ID
+    for row in query_res:
+        results["Average Grade"] = row.avg_grade
+    return {'res': results}
 
 def get_all_students_in_a_class(Course_ID: str):
 
@@ -238,5 +244,3 @@ def students(student_answer_bytes: bytes, student_id, course_id):
         print('New rows have been added.')
     else:
         print('Encountered errors while inserting rows: {}'.format(errors))
-
-
