@@ -96,6 +96,111 @@ def get_correct_answers(class_id: str):
     )
     return configuration.big_query_client.query(query, job_config=job_config).to_dataframe()
 
+def get_average_grade(Student_ID: str):
+
+    query = """
+        SELECT AVG(grade)
+        FROM(
+            SELECT Grade_Total as grade
+            FROM `pliroforiaka-systimata-2022.exams.results` as b
+            WHERE Student_ID = @Student_ID
+        )
+    """
+    job_config = bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("Student_ID", "STRING", Student_ID)
+        ]
+    )
+    return configuration.big_query_client.query(query, job_config=job_config).to_dataframe()
+
+def get_all_students_in_a_class(Course_ID: str):
+
+    query = """
+        SELECT COUNT(*)
+        FROM `pliroforiaka-systimata-2022.exams.results` as b
+        WHERE b.Course_ID = @Course_ID
+    """
+    job_config = bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("Course_ID", "STRING", Course_ID)
+        ]
+    )
+    return configuration.big_query_client.query(query, job_config=job_config).to_dataframe()
+
+def get_students_in_all_classes():
+
+    query = """
+        SELECT Course_ID, COUNT(*)
+        FROM `pliroforiaka-systimata-2022.exams.results` as b
+        GROUP BY b.Course_ID
+    """
+    return configuration.big_query_client.query(query).to_dataframe()
+
+def get_num_studenst_failed_a_class(Course_ID: str):
+
+    query = """
+        SELECT COUNT(*)
+        FROM `pliroforiaka-systimata-2022.exams.results` as b
+        WHERE b.Course_ID = @Course_ID
+        AND b.Grade_Total < 5.0
+    """
+    job_config = bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("Course_ID", "STRING", Course_ID)
+        ]
+    )
+    return configuration.big_query_client.query(query, job_config=job_config).to_dataframe()
+
+def get_num_students_passed_a_class(Course_ID: str):
+
+    query = """
+        SELECT COUNT(*)
+        FROM `pliroforiaka-systimata-2022.exams.results` as b
+        WHERE b.Course_ID = @Course_ID
+        AND b.Grade_Total >= 5.0
+    """
+    job_config = bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("Course_ID", "STRING", Course_ID)
+        ]
+    )
+    return configuration.big_query_client.query(query, job_config=job_config).to_dataframe()
+
+def get_num_students_passed_a_class_certain_year(Course_ID: str, Year: str):
+
+    query = """
+        SELECT year 
+        FROM(
+            SELECT SUBSTRING(Student_ID, 4, 2) as year
+            FROM `pliroforiaka-systimata-2022.exams.results` as b
+            WHERE b.Course_ID = @Course_ID
+            AND b.Grade_Total >= 5.0
+        )
+        WHERE year= @Year
+    """
+    job_config = bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("Course_ID", "STRING", Course_ID),
+            bigquery.ScalarQueryParameter("Year", "STRING", Year)
+        ]
+    )
+    return configuration.big_query_client.query(query, job_config=job_config).to_dataframe()
+
+def get_num_students_passed_without_bonus(Course_ID: str):
+
+    query = """
+        SELECT COUNT(*)
+        FROM `pliroforiaka-systimata-2022.exams.results` as b
+        WHERE b.Course_ID = @Course_ID
+        AND b.Grade_Total - b.Grade_Bonus >= 5.0
+    """
+    job_config = bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("Course_ID", "STRING", Course_ID)
+        ]
+    )
+    return configuration.big_query_client.query(query, job_config=job_config).to_dataframe()
+
 def students(student_answer_bytes: bytes, student_id, course_id):
 
     submitted_ans_df = pd.read_csv(BytesIO(student_answer_bytes))
