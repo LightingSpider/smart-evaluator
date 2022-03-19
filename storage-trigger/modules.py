@@ -115,14 +115,16 @@ def get_average_grade(Student_ID: str):
 
     results = {}
     results["Student_ID"] = Student_ID
+    print(type(query_res))
+    print(query_res)
     for row in query_res:
-        results["Average Grade"] = row.avg_grade
-    return {'res': results}
+        results["Average_Grade"] = row.avg_grade
+    return results
 
 def get_all_students_in_a_class(Course_ID: str):
 
     query = """
-        SELECT COUNT(*)
+        SELECT COUNT(*) as count
         FROM `pliroforiaka-systimata-2022.exams.results` as b
         WHERE b.Course_ID = @Course_ID
     """
@@ -131,21 +133,36 @@ def get_all_students_in_a_class(Course_ID: str):
             bigquery.ScalarQueryParameter("Course_ID", "STRING", Course_ID)
         ]
     )
-    return configuration.big_query_client.query(query, job_config=job_config).to_dataframe()
+    query_res = configuration.big_query_client.query(query, job_config=job_config)
+    results = {}
+    results["Course_ID"] = Course_ID
+    for row in query_res:
+        results["Students_in_class"] = row.count
+    return results
 
 def get_students_in_all_classes():
 
     query = """
-        SELECT Course_ID, COUNT(*)
+        SELECT Course_ID as course_id, COUNT(*) as count
         FROM `pliroforiaka-systimata-2022.exams.results` as b
         GROUP BY b.Course_ID
     """
-    return configuration.big_query_client.query(query).to_dataframe()
+    query_res = configuration.big_query_client.query(query)
+    results = {}
+    cnt = 0
+    for row in query_res:
+        cnt += 1
+        tmp = {}
+        tmp["Course_ID"] = row.course_id
+        tmp["Students_in_class"] = row.count
+        results["course"+str(cnt)] = tmp
+    return results
 
-def get_num_studenst_failed_a_class(Course_ID: str):
+
+def get_num_students_failed_a_class(Course_ID: str):
 
     query = """
-        SELECT COUNT(*)
+        SELECT COUNT(*) as count
         FROM `pliroforiaka-systimata-2022.exams.results` as b
         WHERE b.Course_ID = @Course_ID
         AND b.Grade_Total < 5.0
@@ -155,12 +172,17 @@ def get_num_studenst_failed_a_class(Course_ID: str):
             bigquery.ScalarQueryParameter("Course_ID", "STRING", Course_ID)
         ]
     )
-    return configuration.big_query_client.query(query, job_config=job_config).to_dataframe()
+    query_res = configuration.big_query_client.query(query, job_config=job_config)
+    results = {}
+    results["Course_ID"] = Course_ID
+    for row in query_res:
+        results["Students_failed"] = row.count
+    return results
 
 def get_num_students_passed_a_class(Course_ID: str):
 
     query = """
-        SELECT COUNT(*)
+        SELECT COUNT(*) as count
         FROM `pliroforiaka-systimata-2022.exams.results` as b
         WHERE b.Course_ID = @Course_ID
         AND b.Grade_Total >= 5.0
@@ -170,12 +192,17 @@ def get_num_students_passed_a_class(Course_ID: str):
             bigquery.ScalarQueryParameter("Course_ID", "STRING", Course_ID)
         ]
     )
-    return configuration.big_query_client.query(query, job_config=job_config).to_dataframe()
+    query_res = configuration.big_query_client.query(query, job_config=job_config)
+    results = {}
+    results["Course_ID"] = Course_ID
+    for row in query_res:
+        results["Students_passed"] = row.count
+    return results
 
 def get_num_students_passed_a_class_certain_year(Course_ID: str, Year: str):
 
     query = """
-        SELECT year 
+        SELECT COUNT(year) as count
         FROM(
             SELECT SUBSTRING(Student_ID, 4, 2) as year
             FROM `pliroforiaka-systimata-2022.exams.results` as b
@@ -190,12 +217,19 @@ def get_num_students_passed_a_class_certain_year(Course_ID: str, Year: str):
             bigquery.ScalarQueryParameter("Year", "STRING", Year)
         ]
     )
-    return configuration.big_query_client.query(query, job_config=job_config).to_dataframe()
+    query_res = configuration.big_query_client.query(query, job_config=job_config)
+    results = {}
+    results["Course_ID"] = Course_ID
+    results["Year"] = "20"+Year
+
+    for row in query_res:
+        results["Students_passed"] = row.count
+    return results
 
 def get_num_students_passed_without_bonus(Course_ID: str):
 
     query = """
-        SELECT COUNT(*)
+        SELECT COUNT(*) as count
         FROM `pliroforiaka-systimata-2022.exams.results` as b
         WHERE b.Course_ID = @Course_ID
         AND b.Grade_Total - b.Grade_Bonus >= 5.0
@@ -205,7 +239,12 @@ def get_num_students_passed_without_bonus(Course_ID: str):
             bigquery.ScalarQueryParameter("Course_ID", "STRING", Course_ID)
         ]
     )
-    return configuration.big_query_client.query(query, job_config=job_config).to_dataframe()
+    query_res = configuration.big_query_client.query(query, job_config=job_config)
+    results = {}
+    results["Course_ID"] = Course_ID
+    for row in query_res:
+        results["Students_passed"] = row.count
+    return results
 
 def students(student_answer_bytes: bytes, student_id, course_id):
 
@@ -244,3 +283,9 @@ def students(student_answer_bytes: bytes, student_id, course_id):
         print('New rows have been added.')
     else:
         print('Encountered errors while inserting rows: {}'.format(errors))
+
+
+#print(get_average_grade("03116749"))
+#print(get_all_students_in_a_class("17122"))
+#print(get_num_students_passed_a_class_certain_year("17122","17"))
+print(get_num_students_passed_without_bonus("17122"))
