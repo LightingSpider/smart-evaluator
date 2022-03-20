@@ -1,0 +1,250 @@
+{
+	"info": {
+		"_postman_id": "e66d8c19-fe54-4745-83ea-1193632423b8",
+		"name": "Pliroforiaka",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Teacher Answers",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/home/airth/Documents/9οeksamino/pliroforiaka/smart-evaluator/teachers1.csv"
+						},
+						{
+							"key": "class_id",
+							"value": "0239",
+							"type": "text"
+						},
+						{
+							"key": "teacher_id",
+							"value": "98641",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/teachers/upload_file",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"teachers",
+						"upload_file"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Students Answers",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/home/airth/Documents/9οeksamino/pliroforiaka/smart-evaluator/answers.csv"
+						},
+						{
+							"key": "class_id",
+							"value": "0239",
+							"type": "text"
+						},
+						{
+							"key": "student_id",
+							"value": "03117213",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/students/upload_file",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"students",
+						"upload_file"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Student Average Grade",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/students/:student_id/average",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"students",
+						":student_id",
+						"average"
+					],
+					"variable": [
+						{
+							"key": "student_id",
+							"value": "03117362"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All students in a class",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "course_id",
+							"value": "17122",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/class/:course_id/all_students",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"class",
+						":course_id",
+						"all_students"
+					],
+					"variable": [
+						{
+							"key": "course_id",
+							"value": "17122"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Num of all students in each class",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{base_url}}/students/all",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"students",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Num of failed students",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/class/:course_id/failed_students",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"class",
+						":course_id",
+						"failed_students"
+					],
+					"variable": [
+						{
+							"key": "course_id",
+							"value": "17122"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Num of passed students",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/class/:course_id/passed_students",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"class",
+						":course_id",
+						"passed_students"
+					],
+					"variable": [
+						{
+							"key": "course_id",
+							"value": "17122"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://172.24.57.250:5000"
+		}
+	]
+}
