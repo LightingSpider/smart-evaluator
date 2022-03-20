@@ -1,4 +1,4 @@
-# smart-evaluator
+# Smart Evaluator
 
 The purpose of this project is to create a ***smart evaluator*** for both students and teachers.
 The flow is simple. Teacher uploads a .csv file which contains the correct answer for every question and the question weight. After that every student
