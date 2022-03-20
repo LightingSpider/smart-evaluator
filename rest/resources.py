@@ -4,6 +4,7 @@ from werkzeug.utils import secure_filename
 import os
 
 import configuration
+import modules
 
 class TeacherUploadFile(Resource):
 
@@ -70,3 +71,33 @@ class StudentUploadFile(Resource):
 
         except FileNotFoundError as e:
             abort(500, f"Invalid file path. {str(e)}", statusCode=500)
+
+class AverageGrade(Resource):
+
+    def get(self, student_id):
+
+        return modules.get_average_grade(student_id)
+
+class AllStudentsInClass(Resource):
+
+    def get(self, course_id):
+
+        return modules.get_all_students_in_a_class(course_id)
+
+class AllStudents(Resource):
+
+    def get(self):
+
+        return modules.get_students_in_all_classes()
+
+class FailedStudentsInClass(Resource):
+
+    def get(self, course_id):
+
+        return modules.get_num_students_failed_a_class(course_id)
+
+class PassedStudentsInClass(Resource):
+
+    def get(self, course_id):
+
+        return modules.get_num_students_passed_a_class(course_id)
